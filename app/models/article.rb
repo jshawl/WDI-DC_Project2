@@ -4,6 +4,7 @@ class Article < ActiveRecord::Base
   has_many :favorited_articles
   has_many :users, through: :favorited_articles
   default_scope {order('updated_at DESC')}
+  # excellent use of has_many through *and* scoping here.
 
   def self.get_news(section="news", count=15)
     #Generate random coordinates within a given range
@@ -43,6 +44,7 @@ class Article < ActiveRecord::Base
     site = page_link.split("/")[2].downcase
     #If link is a USA Today site, extract image url from its JSON, get the news category
     #from the URL structure, and update database entry with extra metadata
+    # Excellent comments - this makes the code very easy to read.
     if site == "www.usatoday.com" && page_link.split("/")[3] == "story"
       json = HTTParty.get(page_link)
       image_name = json["metadata_modules"][0]["asset_metadata"]["items"]["smallbasename"]
@@ -50,6 +52,7 @@ class Article < ActiveRecord::Base
       image_url = image_baseurl + image_name
       section = page_link.split("/")[5]
       update(image_url: image_url, section: section)
+      # what will happen if this entry does not update successfully?
     else
       #If link not on USA Today domain, add placeholder image and category
       update(image_url: "https://dl.dropboxusercontent.com/u/7989543/general_assembly_logo/GeneralAssemblylogo.jpg",

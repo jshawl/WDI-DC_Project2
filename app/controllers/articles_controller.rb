@@ -20,6 +20,11 @@ class ArticlesController < ApplicationController
       when "opinion"
         @opinion_active = @active_class
     end
+    # this is a nice solution!
+    # Is there a way to handle the active tabs without creating
+    # individual instance variables? i.e. Can you think of a way
+    # to solve this when there is an arbitrary (unknown) amount
+    # of section?
   end
 
   def index
@@ -28,6 +33,7 @@ class ArticlesController < ApplicationController
 
   def news
     Article.get_news(section="news")
+    # nice use of model methods.
     set_active_nav(active_section="news")
     @articles = Article.all
     render :index
@@ -74,5 +80,16 @@ class ArticlesController < ApplicationController
     @articles = Article.all
     render :index
   end
+
+  # There is a lot of repeated code in this controller. It seems like the only thing 
+  # changing is the category. I would recommend setting up a route like:
+  #
+  # get '/articles/:category', to: 'articles#show_category'
+  #
+  # and in this action:
+  #
+  # def show_category
+  #   Article.get_new( params[:category] )...
+  # end
 
 end
